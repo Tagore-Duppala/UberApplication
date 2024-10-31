@@ -1,6 +1,5 @@
 package com.project.uber.uberApplication.services;
 
-import com.codingshuttle.project.uber.uberApplication.dto.*;
 import com.project.uber.uberApplication.dto.DriverDto;
 import com.project.uber.uberApplication.dto.RideDto;
 import com.project.uber.uberApplication.dto.RideRequestDto;
