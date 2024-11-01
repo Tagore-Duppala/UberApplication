@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class RideRequestDto {
 
-    private long id;
+    private Long id;
 
     private RiderDto rider;
 

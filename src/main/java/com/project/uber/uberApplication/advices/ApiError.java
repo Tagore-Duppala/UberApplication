@@ -2,10 +2,8 @@ package com.project.uber.uberApplication.advices;
 
 import lombok.Builder;
 import lombok.Data;
-import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.http.HttpStatus;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
