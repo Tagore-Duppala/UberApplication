@@ -77,7 +77,7 @@ INSERT INTO user_roles(user_id, roles) VALUES
 INSERT INTO rider(id, user_id, rating) VALUES
 (1,1,4.6);
 
-INSERT INTO driver(id,user_id,rating,available,current_location) VALUES
+INSERT INTO driver(id,user_id,rating,   available,current_location) VALUES
 (3, 3, 4.5, true, ST_GeomFromText('POINT(83.897200 18.296500)', 4326)),
 (4, 4, 4.8, true, ST_GeomFromText('POINT(83.895900 18.295800)', 4326)),
 (5, 5, 4.6, false, ST_GeomFromText('POINT(83.894600 18.297100)', 4326)),
@@ -96,3 +96,7 @@ INSERT INTO driver(id,user_id,rating,available,current_location) VALUES
 (18, 18, 4.9, true, ST_GeomFromText('POINT(83.894300 18.295700)', 4326)),
 (19, 19, 4.1, true, ST_GeomFromText('POINT(83.896200 18.298400)', 4326)),
 (20, 20, 4.4, false, ST_GeomFromText('POINT(83.897300 18.295200)', 4326));
+
+
+--INSERT INTO ride_request(drop_location,fare,pick_up_location) VALUES
+--(ST_GeomFromText('POINT(83.894300 18.295700)', 4326),20.3,ST_GeomFromText('POINT(83.894300 18.295700)', 4326));

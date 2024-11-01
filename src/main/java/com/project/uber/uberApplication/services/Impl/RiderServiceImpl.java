@@ -8,6 +8,7 @@ import com.project.uber.uberApplication.entities.RideRequest;
 import com.project.uber.uberApplication.entities.Rider;
 import com.project.uber.uberApplication.entities.User;
 import com.project.uber.uberApplication.entities.enums.RideRequestStatus;
+import com.project.uber.uberApplication.exceptions.ResourceNotFoundException;
 import com.project.uber.uberApplication.repositories.RideRequestRepository;
 import com.project.uber.uberApplication.repositories.RiderRepository;
 import com.project.uber.uberApplication.services.RiderService;
@@ -31,10 +32,14 @@ public class RiderServiceImpl implements RiderService {
 
     @Override
     public RideRequestDto requestRide(RideRequestDto rideRequestDto) {
+        Rider rider  = getCurrentRider();
         RideRequest rideRequest = modelMapper.map(rideRequestDto,RideRequest.class); //for converting PointDto in riderrqstDto to Point in RideRequestEnitiy we define a typematch in mapperconfig
+//        log.info("Ride request ----------> ",rideRequest);
         rideRequest.setRideRequestStatus(RideRequestStatus.SEARCHING);
+
         Double fare = rideStrategyManager.rideFareCalculationStrategy().calculateFare(rideRequest);
 
+        rideRequest.setRider(rider);
         rideRequest.setFare(fare);
 
         RideRequest savedRideRequest = rideRequestRepository.save(rideRequest);
@@ -76,5 +81,13 @@ public class RiderServiceImpl implements RiderService {
                 .rating(0.0)
                 .build();
         return riderRepository.save(rider);
+    }
+
+    @Override
+    public Rider getCurrentRider() {
+        //TODO: Implement Spring Security
+
+        return riderRepository.findById(1L).orElseThrow(()->
+                new ResourceNotFoundException("Rider not found with id: "+1));
     }
 }
