@@ -15,9 +15,9 @@ public class RideDto {
 
     private DriverDto driver;
 
-    private Point pickUpLocation;
+    private PointDto pickUpLocation;
 
-    private Point dropLocation;
+    private PointDto dropLocation;
 
     private LocalDateTime requestedTime;
 
