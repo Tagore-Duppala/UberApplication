@@ -1,12 +1,12 @@
 package com.project.uber.uberApplication.services.Impl;
 
-import com.project.uber.uberApplication.dto.RideDto;
 import com.project.uber.uberApplication.dto.RideRequestDto;
 import com.project.uber.uberApplication.entities.Driver;
 import com.project.uber.uberApplication.entities.Ride;
 import com.project.uber.uberApplication.entities.RideRequest;
 import com.project.uber.uberApplication.entities.enums.RideRequestStatus;
 import com.project.uber.uberApplication.entities.enums.RideStatus;
+import com.project.uber.uberApplication.exceptions.ResourceNotFoundException;
 import com.project.uber.uberApplication.repositories.RideRepository;
 import com.project.uber.uberApplication.services.RideService;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +25,10 @@ public class RideServiceImpl implements RideService {
     private final RideRepository rideRepository;
 
     @Override
-    public RideDto getRideById(Long rideId) {
-        return null;
+    public Ride getRideById(Long rideId) {
+        Ride ride = rideRepository.findById(rideId).orElseThrow(() ->
+                new ResourceNotFoundException("Couldn't find Ride with Ride id: "+rideId));
+        return ride;
     }
 
     @Override
@@ -59,9 +61,15 @@ public class RideServiceImpl implements RideService {
         return null;
     }
 
+    @Override
+    public Ride updateRideStatus(Ride ride, RideStatus rideStatus) {
+        ride.setRideStatus(rideStatus);
+        return rideRepository.save(ride);
+    }
+
     public String generateOTP(){
         Random random = new Random();
-        int otp = random.nextInt(1000);
+        int otp = random.nextInt(10000);
         return String.format("%04d",otp);
     }
 }

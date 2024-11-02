@@ -1,14 +1,10 @@
 package com.project.uber.uberApplication.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.project.uber.uberApplication.entities.Rider;
 import com.project.uber.uberApplication.entities.enums.PaymentMethod;
 import com.project.uber.uberApplication.entities.enums.RideStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDateTime;
 
@@ -35,6 +31,8 @@ public class RideDto {
     private PaymentMethod paymentMethod;
 
     private RideStatus rideStatus;
+
+    private String otp;
 
     private LocalDateTime startedAt;
 
