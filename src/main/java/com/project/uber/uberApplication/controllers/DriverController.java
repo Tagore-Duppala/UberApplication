@@ -13,7 +13,7 @@ public class DriverController {
 
     private final DriverService driverService;
 
-    @PostMapping("/accepRide/{rideRequestId}")
+    @PostMapping("/acceptRide/{rideRequestId}")
     public ResponseEntity<RideDto> acceptRide(@PathVariable Long rideRequestId){
         return ResponseEntity.ok(driverService.acceptRide(rideRequestId));
     }
