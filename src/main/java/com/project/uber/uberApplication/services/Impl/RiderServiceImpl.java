@@ -3,14 +3,17 @@ package com.project.uber.uberApplication.services.Impl;
 import com.project.uber.uberApplication.dto.DriverDto;
 import com.project.uber.uberApplication.dto.RideDto;
 import com.project.uber.uberApplication.dto.RideRequestDto;
-import com.project.uber.uberApplication.dto.RiderDto;
+import com.project.uber.uberApplication.entities.Ride;
 import com.project.uber.uberApplication.entities.RideRequest;
 import com.project.uber.uberApplication.entities.Rider;
 import com.project.uber.uberApplication.entities.User;
 import com.project.uber.uberApplication.entities.enums.RideRequestStatus;
+import com.project.uber.uberApplication.entities.enums.RideStatus;
 import com.project.uber.uberApplication.exceptions.ResourceNotFoundException;
 import com.project.uber.uberApplication.repositories.RideRequestRepository;
 import com.project.uber.uberApplication.repositories.RiderRepository;
+import com.project.uber.uberApplication.services.DriverService;
+import com.project.uber.uberApplication.services.RideService;
 import com.project.uber.uberApplication.services.RiderService;
 import com.project.uber.uberApplication.stratagies.RideStrategyManager;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +33,8 @@ public class RiderServiceImpl implements RiderService {
     private final RideRequestRepository rideRequestRepository;
     private final RiderRepository riderRepository;
     private final RideStrategyManager rideStrategyManager;
+    private final RideService rideService;
+    private final DriverService driverService;
 
     @Override
     @Transactional
@@ -52,17 +57,35 @@ public class RiderServiceImpl implements RiderService {
     }
 
 
-
-
-
-
     @Override
     public RideDto cancelRide(Long rideId) {
-        return null;
+
+        Rider rider = getCurrentRider();
+        Ride ride = rideService.getRideById(rideId);
+
+        if(!rider.equals(ride.getRider())) throw new RuntimeException("Rider doesn't own this ride: "+rideId);
+        if(!ride.getRideStatus().equals(RideStatus.CONFIRMED)) throw new RuntimeException(("Ride cannot be cancelled as it has/is: "+ride.getRideStatus() ));
+
+        rideService.updateRideStatus(ride,RideStatus.CANCELLED);
+        driverService.updateDriverAvailability(ride.getDriver(),true);
+
+        return modelMapper.map(ride, RideDto.class);
+
     }
 
     @Override
-    public RiderDto rateDriver(Long rideId) {
+    public RideRequestDto cancelRideRequest(Long rideRequestId) {
+        RideRequest rideRequest = rideRequestRepository.findById(rideRequestId)
+                .orElseThrow(()->new ResourceNotFoundException("RideRequest not found with Id: "+rideRequestId));
+        if(!rideRequest.getRideRequestStatus().equals(RideRequestStatus.SEARCHING)) throw new RuntimeException("Ride is already booked! Please cancel the ride instead");
+
+        rideRequest.setRideRequestStatus(RideRequestStatus.CANCELLED);
+        rideRequestRepository.save(rideRequest);
+        return modelMapper.map(rideRequest,RideRequestDto.class);
+    }
+
+    @Override
+    public DriverDto rateDriver(Long rideId) {
         return null;
     }
 

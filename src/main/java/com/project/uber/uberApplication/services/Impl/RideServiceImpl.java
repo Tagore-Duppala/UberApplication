@@ -31,10 +31,6 @@ public class RideServiceImpl implements RideService {
         return ride;
     }
 
-    @Override
-    public void matchWithDriver(RideRequestDto rideRequestDto) {
-
-    }
 
     @Override
     public Ride createNewRide(RideRequest rideRequest, Driver driver) {
@@ -62,9 +58,9 @@ public class RideServiceImpl implements RideService {
     }
 
     @Override
-    public Ride updateRideStatus(Ride ride, RideStatus rideStatus) {
+    public void updateRideStatus(Ride ride, RideStatus rideStatus) {
         ride.setRideStatus(rideStatus);
-        return rideRepository.save(ride);
+        rideRepository.save(ride);
     }
 
     public String generateOTP(){
