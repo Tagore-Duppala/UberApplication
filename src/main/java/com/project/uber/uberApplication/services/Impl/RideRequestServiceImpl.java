@@ -22,4 +22,9 @@ public class RideRequestServiceImpl implements RideRequestService {
 
 
     }
+
+    public RideRequest findRideRequestById(Long rideRequestId){
+        return rideRequestRepository.findById(rideRequestId)
+                .orElseThrow(()-> new ResourceNotFoundException("RideRequest not found with id: "+rideRequestId));
+    }
 }

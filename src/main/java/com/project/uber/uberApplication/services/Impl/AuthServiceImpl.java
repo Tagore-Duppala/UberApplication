@@ -10,6 +10,7 @@ import com.project.uber.uberApplication.exceptions.ResourceNotFoundException;
 import com.project.uber.uberApplication.repositories.UserRepository;
 import com.project.uber.uberApplication.services.AuthService;
 import com.project.uber.uberApplication.services.RiderService;
+import com.project.uber.uberApplication.services.WalletService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ public class AuthServiceImpl implements AuthService {
     private final ModelMapper modelMapper;
     private final UserRepository userRepository;
     private final RiderService riderService;
+    private final WalletService walletService;
 
     @Override
     public void login(String email, String password) {
@@ -39,9 +41,11 @@ public class AuthServiceImpl implements AuthService {
 
         User user = modelMapper.map(signUpDto,User.class);
         user.setRoles(Set.of(Role.RIDER));
-        User savedUser = userRepository.save(user); //saving details in user entity
 
+        User savedUser = userRepository.save(user); //saving details in user entity
         Rider rider=riderService.createNewRider(user); //create new rider, saving in rider entity
+
+        walletService.createNewWallet(savedUser);
 
         return modelMapper.map(savedUser,UserDto.class);
     }

@@ -4,10 +4,9 @@ import com.project.uber.uberApplication.dto.DriverDto;
 import com.project.uber.uberApplication.dto.RideDto;
 import com.project.uber.uberApplication.dto.RiderDto;
 import com.project.uber.uberApplication.entities.Driver;
+import com.project.uber.uberApplication.entities.Ride;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-
-import java.util.List;
 
 public interface DriverService {
 

@@ -8,30 +8,29 @@ import com.project.uber.uberApplication.entities.Ride;
 import com.project.uber.uberApplication.entities.RideRequest;
 import com.project.uber.uberApplication.entities.enums.RideRequestStatus;
 import com.project.uber.uberApplication.entities.enums.RideStatus;
-import com.project.uber.uberApplication.exceptions.ResourceNotFoundException;
 import com.project.uber.uberApplication.repositories.DriverRepository;
-import com.project.uber.uberApplication.repositories.RideRepository;
-import com.project.uber.uberApplication.repositories.RideRequestRepository;
 import com.project.uber.uberApplication.services.DriverService;
+import com.project.uber.uberApplication.services.PaymentService;
+import com.project.uber.uberApplication.services.RideRequestService;
 import com.project.uber.uberApplication.services.RideService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class DriverServiceImpl implements DriverService {
 
     private final DriverRepository driverRepository;
-    private final RideRequestRepository rideRequestRepository;
     private final RideService rideService;
     private final ModelMapper modelMapper;
-    private final RideRepository rideRepository;
+    private final RideRequestService rideRequestService;
+    private final PaymentService paymentService;
 
     @Override
     public RideDto startRide(Long rideId, String otp) {
@@ -42,14 +41,28 @@ public class DriverServiceImpl implements DriverService {
         if(!findRide.getRideStatus().equals(RideStatus.CONFIRMED)) throw new RuntimeException("Ride status is not confirmed so cannot start the ride: "+findRide.getRideStatus());
 
         findRide.setStartedAt(LocalDateTime.now());
+        paymentService.createPayment(findRide);
         rideService.updateRideStatus(findRide,RideStatus.ONGOING);
 
        return modelMapper.map(findRide,RideDto.class);
     }
 
     @Override
+    @Transactional
     public RideDto endRide(Long rideId) {
-        return null;
+
+        Ride findRide = rideService.getRideById(rideId);
+
+        if(!findRide.getDriver().equals(getCurrentDriver())) throw new RuntimeException("Driver is not authorized for cancelling the ride");
+        if(!findRide.getRideStatus().equals(RideStatus.ONGOING)) throw new RuntimeException("Ride status is not ONGOING so cannot end the ride: "+findRide.getRideStatus());
+
+        Ride savedRide = rideService.updateRideStatus(findRide,RideStatus.ENDED);
+        findRide.setEndedAt(LocalDateTime.now());
+        updateDriverAvailability(findRide.getDriver(),true);
+
+        paymentService.processPayment(findRide);
+
+        return modelMapper.map(savedRide,RideDto.class);
     }
 
     @Override
@@ -82,7 +95,7 @@ public class DriverServiceImpl implements DriverService {
     public Page<RideDto> getAllMyRides(PageRequest pageRequest) {
 
         Driver driver = getCurrentDriver();
-        return rideService.getAllRidesOfDriver(driver.getId(), pageRequest).map(
+        return rideService.getAllRidesOfDriver(driver, pageRequest).map(
                 ride -> modelMapper.map(ride,RideDto.class));
 
     }
@@ -94,8 +107,7 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     public RideDto acceptRide(Long rideRequestId) {
-        RideRequest rideRequest = rideRequestRepository.findById(rideRequestId).orElseThrow(()-> new ResourceNotFoundException("RideRequest not found with id: "+rideRequestId));
-
+        RideRequest rideRequest = rideRequestService.findRideRequestById(rideRequestId);
         if(!rideRequest.getRideRequestStatus().equals(RideRequestStatus.SEARCHING)) throw new RuntimeException("RideRequest cannot be accepted, status is "+ rideRequest.getRideRequestStatus());
 
         Driver driver = getCurrentDriver();

@@ -3,6 +3,7 @@ package com.project.uber.uberApplication.services.Impl;
 import com.project.uber.uberApplication.dto.DriverDto;
 import com.project.uber.uberApplication.dto.RideDto;
 import com.project.uber.uberApplication.dto.RideRequestDto;
+import com.project.uber.uberApplication.dto.RiderDto;
 import com.project.uber.uberApplication.entities.Ride;
 import com.project.uber.uberApplication.entities.RideRequest;
 import com.project.uber.uberApplication.entities.Rider;
@@ -19,10 +20,10 @@ import com.project.uber.uberApplication.stratagies.RideStrategyManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -90,13 +91,15 @@ public class RiderServiceImpl implements RiderService {
     }
 
     @Override
-    public DriverDto getMyProfile() {
-        return null;
+    public RiderDto getMyProfile() {
+        return modelMapper.map(getCurrentRider(),RiderDto.class);
     }
 
     @Override
-    public List<RideDto> getAllMyRides() {
-        return List.of();
+    public Page<RideDto> getAllMyRides(PageRequest pageRequest) {
+        Rider rider = getCurrentRider();
+        return rideService.getAllRidesOfRider(rider,pageRequest)
+                .map(ride -> modelMapper.map(ride,RideDto.class));
     }
 
     @Override

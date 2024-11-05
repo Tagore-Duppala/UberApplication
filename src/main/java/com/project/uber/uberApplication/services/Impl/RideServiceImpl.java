@@ -1,9 +1,9 @@
 package com.project.uber.uberApplication.services.Impl;
 
-import com.project.uber.uberApplication.dto.RideRequestDto;
 import com.project.uber.uberApplication.entities.Driver;
 import com.project.uber.uberApplication.entities.Ride;
 import com.project.uber.uberApplication.entities.RideRequest;
+import com.project.uber.uberApplication.entities.Rider;
 import com.project.uber.uberApplication.entities.enums.RideRequestStatus;
 import com.project.uber.uberApplication.entities.enums.RideStatus;
 import com.project.uber.uberApplication.exceptions.ResourceNotFoundException;
@@ -48,19 +48,19 @@ public class RideServiceImpl implements RideService {
     }
 
     @Override
-    public Page<Ride> getAllRidesOfRider(Long riderId, PageRequest pageRequest) {
-        return null;
+    public Page<Ride> getAllRidesOfRider(Rider rider, PageRequest pageRequest) {
+        return rideRepository.findByRider(rider,pageRequest);
     }
 
     @Override
-    public Page<Ride> getAllRidesOfDriver(Long DriverId, PageRequest pageRequest) {
-        return null;
+    public Page<Ride> getAllRidesOfDriver(Driver driver, PageRequest pageRequest) {
+        return rideRepository.findByDriver(driver,pageRequest);
     }
 
     @Override
-    public void updateRideStatus(Ride ride, RideStatus rideStatus) {
+    public Ride updateRideStatus(Ride ride, RideStatus rideStatus) {
         ride.setRideStatus(rideStatus);
-        rideRepository.save(ride);
+        return rideRepository.save(ride);
     }
 
     public String generateOTP(){
