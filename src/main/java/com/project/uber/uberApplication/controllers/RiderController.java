@@ -39,9 +39,9 @@ public class RiderController {
         return ResponseEntity.ok(riderService.getMyProfile());
     }
 
-    @PostMapping("/rateDriver/{rideId}")
-    public ResponseEntity<DriverDto> rateRider(Long rideId){
-        return  ResponseEntity.ok(riderService.rateDriver(rideId));
+    @PostMapping("/rateDriver/{rideId}/{rating}")
+    public ResponseEntity<DriverDto> rateRider(Long rideId, @PathVariable Double rating){
+        return  ResponseEntity.ok(riderService.rateDriver(rideId, rating));
     }
 
     @GetMapping("/getAllMyRides")

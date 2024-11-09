@@ -11,9 +11,11 @@ import com.project.uber.uberApplication.entities.User;
 import com.project.uber.uberApplication.entities.enums.RideRequestStatus;
 import com.project.uber.uberApplication.entities.enums.RideStatus;
 import com.project.uber.uberApplication.exceptions.ResourceNotFoundException;
+import com.project.uber.uberApplication.repositories.RideRepository;
 import com.project.uber.uberApplication.repositories.RideRequestRepository;
 import com.project.uber.uberApplication.repositories.RiderRepository;
 import com.project.uber.uberApplication.services.DriverService;
+import com.project.uber.uberApplication.services.RatingService;
 import com.project.uber.uberApplication.services.RideService;
 import com.project.uber.uberApplication.services.RiderService;
 import com.project.uber.uberApplication.stratagies.RideStrategyManager;
@@ -36,6 +38,8 @@ public class RiderServiceImpl implements RiderService {
     private final RideStrategyManager rideStrategyManager;
     private final RideService rideService;
     private final DriverService driverService;
+    private final RideRepository rideRepository;
+    private final RatingService ratingService;
 
     @Override
     @Transactional
@@ -86,8 +90,13 @@ public class RiderServiceImpl implements RiderService {
     }
 
     @Override
-    public DriverDto rateDriver(Long rideId) {
-        return null;
+    public DriverDto rateDriver(Long rideId, Double rating) {
+        Ride ride = rideService.getRideById(rideId);
+
+        if(!ride.getRideStatus().equals(RideStatus.ENDED)) throw new RuntimeException("Ride is not yet ended!");
+        if(!getCurrentRider().equals(ride.getDriver())) throw new RuntimeException("Ride doesn't belong to current rider");
+
+        return ratingService.rateDriver(ride,rating);
     }
 
     @Override

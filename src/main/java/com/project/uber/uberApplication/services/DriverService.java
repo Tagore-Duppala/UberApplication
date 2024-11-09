@@ -15,7 +15,7 @@ public interface DriverService {
 
     RideDto cancelRide(Long rideId);
 
-    RiderDto rateRider(Long rideId);
+    RiderDto rateRider(Long rideId, Double rating);
 
     DriverDto getMyProfile();
 

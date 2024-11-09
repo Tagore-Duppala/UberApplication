@@ -43,9 +43,9 @@ public class DriverController {
         return ResponseEntity.ok(driverService.getMyProfile());
     }
 
-    @PostMapping("/rateRider/{rideId}")
-    public ResponseEntity<RiderDto> rateRider(@PathVariable Long rideId){
-        return  ResponseEntity.ok(driverService.rateRider(rideId));
+    @PostMapping("/rateRider/{rideId}/{rating}")
+    public ResponseEntity<RiderDto> rateRider(@PathVariable Long rideId, @PathVariable Double rating){
+        return  ResponseEntity.ok(driverService.rateRider(rideId, rating));
     }
 
     @GetMapping("/getAllMyRides")
@@ -54,4 +54,5 @@ public class DriverController {
         PageRequest pageRequest = PageRequest.of(pageOffset,pageSize);
         return ResponseEntity.ok(driverService.getAllMyRides(pageRequest));
     }
+
 }

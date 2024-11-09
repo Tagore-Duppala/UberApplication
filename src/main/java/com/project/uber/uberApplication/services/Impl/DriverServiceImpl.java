@@ -9,10 +9,8 @@ import com.project.uber.uberApplication.entities.RideRequest;
 import com.project.uber.uberApplication.entities.enums.RideRequestStatus;
 import com.project.uber.uberApplication.entities.enums.RideStatus;
 import com.project.uber.uberApplication.repositories.DriverRepository;
-import com.project.uber.uberApplication.services.DriverService;
-import com.project.uber.uberApplication.services.PaymentService;
-import com.project.uber.uberApplication.services.RideRequestService;
-import com.project.uber.uberApplication.services.RideService;
+import com.project.uber.uberApplication.repositories.RideRepository;
+import com.project.uber.uberApplication.services.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -31,6 +29,8 @@ public class DriverServiceImpl implements DriverService {
     private final ModelMapper modelMapper;
     private final RideRequestService rideRequestService;
     private final PaymentService paymentService;
+    private final RatingService ratingService;
+    private final RideRepository rideRepository;
 
     @Override
     public RideDto startRide(Long rideId, String otp) {
@@ -43,6 +43,7 @@ public class DriverServiceImpl implements DriverService {
         findRide.setStartedAt(LocalDateTime.now());
         paymentService.createPayment(findRide);
         rideService.updateRideStatus(findRide,RideStatus.ONGOING);
+        ratingService.createNewRating(findRide);
 
        return modelMapper.map(findRide,RideDto.class);
     }
@@ -81,8 +82,14 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public RiderDto rateRider(Long rideId) {
-        return null;
+    public RiderDto rateRider(Long rideId, Double rating) {
+
+        Ride ride = rideService.getRideById(rideId);
+        if(!ride.getRideStatus().equals(RideStatus.ENDED)) throw new RuntimeException("Ride is not yet ended!");
+        if(!getCurrentDriver().equals(ride.getDriver())) throw new RuntimeException("Current Driver is not assigned to this ride");
+
+        return ratingService.rateRider(ride,rating);
+
     }
 
     @Override
