@@ -1,11 +1,17 @@
 package com.project.uber.uberApplication.entities;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 import org.locationtech.jts.geom.Point;
 
 @Entity
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(indexes = {
+        @Index(name = "idx_vehicleId", columnList = "vehicleId")
+})
 public class Driver {
 
     @Id
@@ -20,6 +26,8 @@ public class Driver {
 
 
     private Boolean available;
+
+    private String vehicleId;
 
     @Column(columnDefinition = "Geometry(Point, 4326)")
     private Point currentLocation;

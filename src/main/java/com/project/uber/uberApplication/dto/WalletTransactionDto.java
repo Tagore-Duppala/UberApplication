@@ -1,15 +1,10 @@
 package com.project.uber.uberApplication.dto;
 
-import com.project.uber.uberApplication.entities.Ride;
-import com.project.uber.uberApplication.entities.Wallet;
 import com.project.uber.uberApplication.entities.enums.TransactionMethod;
 import com.project.uber.uberApplication.entities.enums.TransactionType;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 

@@ -1,6 +1,7 @@
 package com.project.uber.uberApplication.services;
 
 import com.project.uber.uberApplication.dto.DriverDto;
+import com.project.uber.uberApplication.dto.OnboardNewDriverDto;
 import com.project.uber.uberApplication.dto.SignUpDto;
 import com.project.uber.uberApplication.dto.UserDto;
 
@@ -10,7 +11,7 @@ public interface AuthService {
 
     UserDto signup(SignUpDto signUpDto);
 
-    DriverDto onboardNewDriver(Long UserId);
+    DriverDto onboardNewDriver(Long UserId, String vehicleId);
 
 
 

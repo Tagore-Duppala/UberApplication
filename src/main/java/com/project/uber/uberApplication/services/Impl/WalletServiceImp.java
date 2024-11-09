@@ -37,7 +37,7 @@ public class WalletServiceImp implements WalletService {
                 .wallet(wallet)
                 .build();
 
-//        walletTransactionService.createNewWalletTransaction(walletTransaction);
+        walletTransactionService.createNewWalletTransaction(walletTransaction);
 
         wallet.getTransactions().add(walletTransaction);
         return walletRepository.save(wallet);
@@ -59,7 +59,7 @@ public class WalletServiceImp implements WalletService {
                 .wallet(wallet)
                 .build();
 
-//        walletTransactionService.createNewWalletTransaction(walletTransaction);
+        walletTransactionService.createNewWalletTransaction(walletTransaction);
 
         wallet.getTransactions().add(walletTransaction);
         return walletRepository.save(wallet);
