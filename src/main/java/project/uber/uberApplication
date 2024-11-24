@@ -1,4 +1,0 @@
-Next steps:
-
-1) Split RideDto to DriverRideDto and RiderRideDto to prevent driver to view the otp
-
